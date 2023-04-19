@@ -8,12 +8,18 @@ from eralchemy2 import render_er
 Base = declarative_base()
 
 #User: should login
-#That implies it has a username, and a password
+#That implies it has a username, registered email, and a password
+#also linked to their favorites through an ID: user_id
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     user_name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
+    fav_id = Column(Integer, ForeignKey("favorites.id" ))
+    favorites = relationship("Favorites")
+
  
 #Character: same as the SWAPI exercise. Not person, since there's other races on the universe
 #name, birth year, homeworld, gender, height, mass
@@ -21,7 +27,7 @@ class User(Base):
 class Character(Base):
     __tablename__ = 'character'
     id = Column(Integer, primary_key=True)
-    character_name = Column(String(250))
+    name = Column(String(250))
     birth_year = Column(String(250))
     homeworld = Column(String(250))
     gender = Column(String(250))
@@ -33,7 +39,7 @@ class Character(Base):
 class Planet(Base):
     __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
-    planet_name = Column(String(250))
+    name = Column(String(250))
     population = Column(Integer)
     diameter = Column(Integer)
     orbital_period = Column(Integer)
@@ -46,7 +52,7 @@ class Planet(Base):
 class Vehicle(Base):
     __tablename__ = 'vehicle'
     id = Column(Integer, primary_key=True)
-    vehicle_name = Column(String(250))
+    name = Column(String(250))
     vehicle_model = Column(String(250))
     vehicle_class = Column(String(250))
     crew_capacity = Column(Integer)
@@ -59,11 +65,9 @@ class Vehicle(Base):
 class Favorites(Base):
     __tablename__ = 'favorites'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    character_id = Column(Integer, ForeignKey('character.id'))
-    planet_id = Column(Integer, ForeignKey('planet.id'))
-    vehicle_id = Column(Integer, ForeignKey('vehicle.id'))
-    user = relationship(User)
+    character_id = Column(String(250), ForeignKey('character.id'))
+    planet_id = Column(String(250), ForeignKey('planet.id'))
+    vehicle_id= Column(String(250), ForeignKey('vehicle.id'))
     character = relationship(Character)
     planet = relationship(Planet)
     vehicle = relationship(Vehicle)

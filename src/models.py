@@ -30,7 +30,7 @@ class User(Base):
 #keep in mind: birth year should be a string: BBY/ABY (before/after the battle of Yavin)
 #connected to a secondary favorite table
 class Character(Base):
-    __tablename__ = 'character'
+    __tablename__ = "character"
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     birth_year = Column(String(250))
@@ -39,10 +39,11 @@ class Character(Base):
     height = Column(Integer)
     mass = Column(Integer)
     isfav = Column(Boolean)
+    #it's possible to establish a relationship between homeworld and the planets database
 
 #CharFavorite: exclusive table to store id of characters with isfav=true
 class CharFavorite(Base):
-    __tablename__="charfav"
+    __tablename__= "charfav"
     id = Column(Integer, primary_key=True)
     favid = Column(Integer, ForeignKey("character.filter_by(isfav=True)"))
     character = relationship(Character)
@@ -50,7 +51,7 @@ class CharFavorite(Base):
 #Planet: same as the SWAPI exercise
 #name, population, diameter, orbital period, rotation period, gravity
 class Planet(Base):
-    __tablename__ = 'planet'
+    __tablename__ = "planet"
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     population = Column(Integer)
@@ -62,7 +63,7 @@ class Planet(Base):
 
 #PlanFavorite: exclusive table to store id of planets with isfav=true
 class PlanFavorite(Base):
-    __tablename__="planfav"
+    __tablename__ = "planfav"
     id = Column(Integer, primary_key=True)
     favid = Column(Integer, ForeignKey("planet.filter_by(isfav=True)"))
     planet = relationship(Planet)
@@ -71,7 +72,7 @@ class PlanFavorite(Base):
 #Vehicle: same as the SWAPI exercise
 #name, model, vehicle class, crew, passengers, cargo capacity
 class Vehicle(Base):
-    __tablename__ = 'vehicle'
+    __tablename__ = "vehicle"
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     vehicle_model = Column(String(250))
@@ -79,15 +80,34 @@ class Vehicle(Base):
     crew_capacity = Column(Integer)
     passenger_capacity = Column(Integer)
     cargo_capacity = Column(Integer)
-    isfav = Column (Boolean)
+    isfav = Column(Boolean)
 
 #VehicFavorite: exclusive table to store id of vehicles with isfav=true
 class VehicFavorite(Base):
-    __tablename__="vehicfav"
+    __tablename__ = "vehicfav"
     id = Column(Integer, primary_key=True)
     favid = Column(Integer, ForeignKey("vehicle.filter_by(isfav=True)"))
     vehicle = relationship(Vehicle)
 
+#Starship: not the same as vehicle: has hyperdrive capability
+#name, model, manufacturer, hyperdrive_rating (as hyperdrive), max_atmosphering_speed (at max_atm)
+#rating could include a decimal (4.0), max_atm could be N/A if the starship is incapable of atmospheric flight
+class Starship(Base):
+    __tablename__ = "starship"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250))
+    model = Column(String(250))
+    manufacturer = Column(String(250))
+    hyperdrive = Column(String(250))
+    max_atm = Column(String(250))
+    isfav = Column(Boolean)
+
+#StarshFavorite: exclusive table to store id of starships with isfav=true
+class StarshFavorite(Base):
+    __tablename__ = "starshfav"
+    id = Column(Integer, primary_key=True)
+    favid = Column(Integer, ForeignKey("starship.filter_by(isfav=True)"))
+    starship = relationship(Starship)
 
 #Favorites: user should store their favorites
 #condenses all of the secondary favorite tables
@@ -98,11 +118,11 @@ class Favorites(Base):
     char_id = Column(Integer, ForeignKey("charfav.id"))
     plan_id = Column(Integer, ForeignKey("planfav.id"))
     vehic_id = Column(Integer, ForeignKey("vehicfav.id"))
+    starsh_id = Column(Integer, ForeignKey("starshfav.id"))
     charfav = relationship(CharFavorite)
     planfav = relationship(PlanFavorite)
     vehicfav = relationship(VehicFavorite)
-
-
+    starshfav = relationship(StarshFavorite)
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
